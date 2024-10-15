@@ -20,6 +20,7 @@ package com.android.providers.calendar;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.AppOpsManager;
 import android.app.PendingIntent;
@@ -471,6 +472,8 @@ public class CalendarProvider2 extends SQLiteContentProvider implements OnAccoun
     private Context mContext;
     private ContentResolver mContentResolver;
 
+    private ActivityManager mActivityManager;
+
     @VisibleForTesting
     protected CalendarAlarmManager mCalendarAlarm;
 
@@ -533,6 +536,8 @@ public class CalendarProvider2 extends SQLiteContentProvider implements OnAccoun
 
     private boolean initialize() {
         mContext = getContext();
+
+        mActivityManager = mContext.getSystemService(ActivityManager.class);
         mContentResolver = mContext.getContentResolver();
 
         mDbHelper = (CalendarDatabaseHelper)getDatabaseHelper();
@@ -981,9 +986,17 @@ public class CalendarProvider2 extends SQLiteContentProvider implements OnAccoun
 
     private Cursor queryInternal(Uri uri, String[] projection, String selection,
             String[] selectionArgs, String sortOrder, int callingUid) {
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "query uri - " + uri);
+        if (true/*Log.isLoggable(TAG, Log.VERBOSE)*/) {
+            Log.v(TAG, "query uri - " + uri +
+                        " pkg=" + getCallingPackage() +
+                        " callingUid=" + callingUid);
+
         }
+
+        if( mActivityManager != null ) {
+            if( mActivityManager.getBaikalPackageOption(getCallingPackage(),callingUid,6,0) != 0 ) return null;
+        }
+
         validateUriParameters(uri.getQueryParameterNames());
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
