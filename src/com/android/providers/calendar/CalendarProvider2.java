@@ -988,13 +988,13 @@ public class CalendarProvider2 extends SQLiteContentProvider implements OnAccoun
             String[] selectionArgs, String sortOrder, int callingUid) {
         if (true/*Log.isLoggable(TAG, Log.VERBOSE)*/) {
             Log.v(TAG, "query uri - " + uri +
-                        " pkg=" + getCallingPackage() +
+                        " pkg=" + getCallingPackageUnchecked() +
                         " callingUid=" + callingUid);
 
         }
 
         if( mActivityManager != null ) {
-            if( mActivityManager.getBaikalPackageOption(getCallingPackage(),callingUid,6,0) != 0 ) return null;
+            if( mActivityManager.getBaikalPackageOption(getCallingPackageUnchecked(),callingUid,6,0) != 0 ) return null;
         }
 
         validateUriParameters(uri.getQueryParameterNames());
