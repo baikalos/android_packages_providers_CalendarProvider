@@ -994,7 +994,10 @@ public class CalendarProvider2 extends SQLiteContentProvider implements OnAccoun
         }
 
         if( mActivityManager != null ) {
-            if( mActivityManager.getBaikalPackageOption(getCallingPackageUnchecked(),callingUid,6,0) != 0 ) return null;
+            if( mActivityManager.getBaikalPackageOption(getCallingPackageUnchecked(),callingUid,6,0) != 0 ) {
+                Log.w(TAG,"Baikal blocked calendar access from :" + getCallingPackageUnchecked() + "/" + callingUid);
+                return null;
+            }
         }
 
         validateUriParameters(uri.getQueryParameterNames());
