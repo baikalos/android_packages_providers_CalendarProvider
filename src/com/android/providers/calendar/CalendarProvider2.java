@@ -24,6 +24,7 @@ import android.app.AlarmManager;
 import android.app.AppOpsManager;
 import android.app.PendingIntent;
 import android.app.compat.CompatChanges;
+import android.baikalos.BaikalAppProfile;
 import android.compat.annotation.ChangeId;
 import android.compat.annotation.Disabled;
 import android.content.BroadcastReceiver;
@@ -997,6 +998,13 @@ public class CalendarProvider2 extends SQLiteContentProvider implements OnAccoun
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             Log.v(TAG, "query uri - " + uri);
         }
+
+        if( getContext().getBaikalContext().getBaikalPackageOption(getCallingPackageUnchecked(),
+                callingUid,BaikalAppProfile.BAIKAL_OPCODE_BLOCK_CALENDAR,0) != 0 ) {
+            Log.w(TAG,"Baikal blocked calendar access from :" + getCallingPackageUnchecked() + "/" + callingUid);
+            return null;
+        }
+        
         validateUriParameters(uri.getQueryParameterNames());
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
